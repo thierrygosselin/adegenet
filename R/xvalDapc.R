@@ -60,8 +60,10 @@ xvalDapc <- function (x, ...) UseMethod("xvalDapc")
     train_pca <- dudi.pca(train_dat, nf = n.pca, scannf = FALSE,
                           center = x$CENTER, scale = x$SCALE)
     # dapc() otherwise silently reduces n.pca to the available rank.
+    # LDA's pooled within-group covariance has rank at most N - K.
+    lda_rank_max <- nrow(train_dat) - nlevels(droplevels(train_grp))
     if (min(train_pca$rank, sum(train_pca$eig > 1e-14),
-            nrow(train_dat) - 1L) < n.pca) return(NA_real_)
+            lda_rank_max) < n.pca) return(NA_real_)
     temp.dapc <- suppressWarnings(dapc(train_dat, train_grp, dudi = train_pca,
                                        n.pca = n.pca, n.da = n.da))
     temp.pred <- predict.dapc(temp.dapc, newdata = new_dat)
@@ -209,7 +211,8 @@ xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set 
   if(missing(n.pca.max)) n.pca.max <- min(dim(x))
   if (!length(n.pca.max) || any(!is.finite(n.pca.max)) || any(n.pca.max < 1))
     stop("n.pca.max must contain positive finite values.")
-  n.pca.max <- floor(min(max(n.pca.max), ncol(x), N.training - 1L))
+  lda.rank.max <- N.training - nlevels(grp)
+  n.pca.max <- floor(min(max(n.pca.max), ncol(x), lda.rank.max))
   if (n.pca.max < 1L) stop("Too few training individuals for PCA.")
     
   ## DETERMINE N.PCA IF NEEDED ##
@@ -236,7 +239,8 @@ xvalDapc.default <- function(x, grp, n.pca.max = 300, n.da = NULL, training.set 
   if (!any(valid))
     stop("No candidate PC count is supported in every training split; reduce n.pca.")
   if (any(!valid))
-    warning("PC counts exceeding the rank of a training split were excluded ",
+    warning("PC counts exceeding the PCA or within-group LDA rank of a ",
+            "training split were excluded ",
             "from selection: ", paste(names(valid)[!valid], collapse = ", "))
   
   
