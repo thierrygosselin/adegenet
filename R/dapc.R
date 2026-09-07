@@ -820,7 +820,7 @@ a.score <- function(x, n.sim=10, ...){
 ## optim.a.score
 ##############
 optim.a.score <- function(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
-                         n.sim=10, n.da=length(levels(x$grp))-1L, ...){
+                         n.sim=10, n.da=x$n.da, ...){
     ## A FEW CHECKS ##
     if(!inherits(x,"dapc")) stop("x is not a dapc object")
     if (!is.numeric(n.pca) || !length(n.pca) || anyNA(n.pca) ||
