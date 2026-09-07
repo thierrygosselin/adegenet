@@ -66,6 +66,18 @@ test_that("rank-infeasible candidates are not scored under a false PC count", {
                           n.rep = 2, xval.plot = FALSE), "No candidate")
 })
 
+test_that("PC candidates respect the training within-group LDA rank", {
+    set.seed(107)
+    x <- matrix(rnorm(30 * 40), 30, 40)
+    grp <- factor(rep(c("A", "B", "C"), each = 10))
+    # With 21 training individuals in 3 groups, pooled within-group
+    # covariance has rank at most 18, even though PCA supports 20 axes.
+    ans <- xvalDapc(x, grp, n.pca = c(18, 19, 20), n.pca.max = 20,
+                    training.set = 0.7, n.rep = 1, xval.plot = FALSE)
+    expect_equal(unique(ans[[1]]$n.pca), 18)
+    expect_lte(ans$DAPC$n.pca, 18)
+})
+
 test_that("missing data are rejected explicitly and splits retain groups", {
     x <- matrix(seq_len(40), 10, 4)
     x[1, 1] <- NA
