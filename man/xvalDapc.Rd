@@ -89,8 +89,10 @@ xvalDapc(x, \dots)
     the selected PC count and the requested \code{center}, \code{scale},
     and \code{n.da} settings.
 
-    A PC count unsupported by the rank of any of its training splits is
-    excluded from selection, with a warning. Such replicates have
+    A PC count unsupported by the PCA rank or the pooled within-group
+    LDA rank of any training split is excluded from selection, with a
+    warning. The latter is at most \eqn{N-K}, for \eqn{N} training
+    individuals in \eqn{K} represented groups. Such replicates have
     \code{NA} success, and the candidate's mean success and RMSE are
     \code{NA}; they are not silently evaluated using fewer PCs.
     If no candidate remains, reduce the requested PC counts.
