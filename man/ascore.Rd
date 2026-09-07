@@ -11,7 +11,7 @@
 a.score(x, n.sim=10, \ldots)
 
 optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
-              n.sim=10, n.da=length(levels(x$grp))-1L, \ldots)
+              n.sim=10, n.da=x$n.da, \ldots)
 }
 \arguments{
 \item{x}{a \code{dapc} object.}
@@ -31,7 +31,9 @@ optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
 \item{n.da}{one positive \code{integer} indicating the maximum number of axes
   retained in each Discriminant Analysis step. It cannot exceed the number of
   groups minus one. When fewer PCA axes are being evaluated, the number of
-  discriminant axes is limited to the number of retained PCA axes.}
+  discriminant axes is limited to the number of retained PCA axes. The default
+  uses the number retained in the supplied DAPC object, preserving the
+  historical behaviour when this argument is omitted.}
 \item{\ldots}{further arguments passed to other methods; currently unused..}
 }
 \details{
