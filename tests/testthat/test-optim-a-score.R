@@ -29,6 +29,11 @@ test_that("optim.a.score applies the requested discriminant dimension", {
                               n.sim = 4, n.da = 2, plot = FALSE)
 
     expect_false(isTRUE(all.equal(one.axis$mean, two.axes$mean)))
+
+    set.seed(903)
+    omitted <- optim.a.score(fit, n.pca = c(2, 4, 6), smart = FALSE,
+                             n.sim = 4, plot = FALSE)
+    expect_equal(omitted$mean, two.axes$mean)
 })
 
 test_that("optim.a.score validates dimensions and controls", {
